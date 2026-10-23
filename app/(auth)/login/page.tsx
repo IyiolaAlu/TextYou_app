@@ -14,7 +14,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { signIn, useSession } from "@/lib/auth/auth-client"
-
+import { Loader2, LogIn } from "lucide-react"
 
 export default function Login() {
     const router = useRouter()
@@ -23,7 +23,7 @@ export default function Login() {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState("")
 
-     useEffect(() => {
+    useEffect(() => {
         if (session) {
             router.push("/room")
         }
@@ -68,8 +68,6 @@ export default function Login() {
                 }
             } else if (data.data && "message" in data.data && typeof data.data.message === "string") {
                 setError(data.data.message)
-            } else {
-                router.push("/room")
             }
         } catch (error) {
             setError("Network error. Please check your connection")
@@ -81,7 +79,10 @@ export default function Login() {
     return (
         <div className="flex min-h-[calc(100dvh-4rem)] items-center justify-center bg-[#F5F5F5] p-5">
             <Card className="w-full max-w-md shadow-xl border-gray-200">
-                <CardHeader className="space-y-1">
+                <CardHeader className="space-y-1 pb-6 text-center">
+                    <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <LogIn className="h-6 w-6" />
+                    </div>
                     <CardTitle className="text-2xl font-bold tracking-tight">
                         Welcome back
                     </CardTitle>
@@ -91,7 +92,7 @@ export default function Login() {
                 </CardHeader>
 
                 <CardContent>
-                    <form onSubmit={handleSubmit} className="space-y-4">
+                    <form onSubmit={handleSubmit} className="space-y-5">
                         <div className="space-y-2">
                             <Label htmlFor="email">Email</Label>
                             <Input
@@ -103,12 +104,15 @@ export default function Login() {
                                 id="email"
                                 type="email"
                                 placeholder="you@example.com"
+                                className="h-11"
                                 required
                             />
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="password">Password</Label>
+                            <div className="flex items-center justify-between">
+                                <Label htmlFor="password">Password</Label>
+                            </div>
                             <Input
                                 value={form.password}
                                 onChange={(e) => {
@@ -119,6 +123,7 @@ export default function Login() {
                                 id="password"
                                 type="password"
                                 placeholder="Enter your password"
+                                className="h-11"
                                 required
                             />
                         </div>
@@ -129,16 +134,23 @@ export default function Login() {
                             </div>
                         )}
 
-                        <Button size="lg" type="submit" className="w-full" disabled={loading}>
-                            {loading ? "Signing in..." : "Sign In"}
+                        <Button size="lg" type="submit" className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-base" disabled={loading}>
+                            {loading ? (
+                                <>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    Signing in...
+                                </>
+                            ) : (
+                                "Sign In"
+                            )}
                         </Button>
                     </form>
                 </CardContent>
 
-                <CardFooter className="flex justify-center border-t pt-4">
+                <CardFooter className="flex justify-center border-t pt-6">
                     <p className="text-sm text-gray-600">
                         Don&apos;t have an account?{" "}
-                        <Link href="/sign-up" className="text-black font-medium hover:underline">
+                        <Link href="/sign-up" className="text-blue-600 font-semibold hover:underline">
                             Sign up
                         </Link>
                     </p>

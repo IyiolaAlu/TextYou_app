@@ -15,6 +15,8 @@ import { useState } from "react"
 import { signUp } from "@/lib/auth/auth-client"
 import { useRouter } from "next/navigation"
 import { CldUploadWidget } from "next-cloudinary"
+import { Loader2, UserPlus, Image as ImageIcon } from "lucide-react"
+import Image from "next/image"
 
 export default function SignUp() {
     const router = useRouter()
@@ -93,53 +95,66 @@ export default function SignUp() {
     }
 
     return (
-        <div className="flex min-h-[calc(100dvh-4rem)] items-center justify-center bg-[#F5F5F5] p-5">
+        <div className="flex min-h-[calc(100dvh-4rem)] items-center justify-center bg-[#F5F5F5] p-5 py-10">
             <Card className="w-full max-w-md shadow-xl border-gray-200">
-                <CardHeader className="space-y-1">
+                <CardHeader className="space-y-1 pb-6 text-center">
+                    <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <UserPlus className="h-6 w-6" />
+                    </div>
                     <CardTitle className="text-2xl font-bold tracking-tight">
                         Create an account
                     </CardTitle>
                     <CardDescription className="text-gray-500">
-                        Join StyleWears and start shopping
+                        Join TextYou and start chatting
                     </CardDescription>
                 </CardHeader>
 
                 <CardContent>
                     <form onSubmit={handleSubmit} className="space-y-4">
-                         <div className="space-y-2">
-                                <Label>Image</Label>
-                                <CldUploadWidget
-                                    uploadPreset="ecommerce_uploads"
-                                    onSuccess={(result) => {
-                                        const url = (result.info as { secure_url: string }).secure_url
-                                        if (url) {
-                                            setForm({ ...form, image: url })
-                                            setIsUploading(false)
-                                        }
-                                    }}
-                                    onQueuesStart={() => setIsUploading(true)}
-                                    onQueuesEnd={() => setIsUploading(false)}
-                                >
-                                    {({ open }) => (
-                                        <button
-                                            type="button"
-                                            onClick={() => open()}
-                                            className="w-full border-2 border-dashed border-gray-300 rounded-lg p-6 text-sm text-gray-500 hover:border-blue-500 hover:text-blue-500 transition"
-                                            disabled={isUploading}
-                                        >
-                                            {isUploading ? (
-                                                "Uploading..."
-                                            ) : form.image ? (
-                                                "Image Uploaded ✅"
-                                            ) : (
-                                                "Click to Upload Image"
-                                            )}
-                                        </button>
-                                    )}
-                                </CldUploadWidget>
-                            </div>
+                        
+                        {/* Image Uploader */}
+                        <div className="space-y-2 flex flex-col items-center mb-2">
+                            <Label className="self-start">Profile Image</Label>
+                            <CldUploadWidget
+                                uploadPreset="ecommerce_uploads"
+                                onSuccess={(result) => {
+                                    const url = (result.info as { secure_url: string }).secure_url
+                                    if (url) {
+                                        setForm({ ...form, image: url })
+                                        setIsUploading(false)
+                                    }
+                                }}
+                                onQueuesStart={() => setIsUploading(true)}
+                                onQueuesEnd={() => setIsUploading(false)}
+                            >
+                                {({ open }) => (
+                                    <button
+                                        type="button"
+                                        onClick={() => open()}
+                                        className={`relative w-24 h-24 rounded-full border-2 border-dashed flex items-center justify-center transition-colors overflow-hidden ${
+                                            form.image ? "border-blue-500 p-0" : "border-gray-300 hover:border-blue-500 hover:bg-blue-50 text-gray-500"
+                                        }`}
+                                        disabled={isUploading}
+                                    >
+                                        {isUploading ? (
+                                            <Loader2 className="h-6 w-6 animate-spin text-blue-500" />
+                                        ) : form.image ? (
+                                            <Image 
+                                                src={form.image} 
+                                                alt="Profile" 
+                                                fill 
+                                                unoptimized={true} 
+                                                className="object-cover" 
+                                            />
+                                        ) : (
+                                            <ImageIcon className="h-6 w-6" />
+                                        )}
+                                    </button>
+                                )}
+                            </CldUploadWidget>
+                        </div>
+
                         <div className="grid grid-cols-2 gap-3">
-                           
                             <div className="space-y-2">
                                 <Label htmlFor="firstName">First name</Label>
                                 <Input
@@ -151,6 +166,7 @@ export default function SignUp() {
                                     id="firstName"
                                     type="text"
                                     placeholder="John"
+                                    className="h-11"
                                     required
                                 />
                             </div>
@@ -165,6 +181,7 @@ export default function SignUp() {
                                     id="lastName"
                                     type="text"
                                     placeholder="Doe"
+                                    className="h-11"
                                     required
                                 />
                             </div>
@@ -181,6 +198,7 @@ export default function SignUp() {
                                 id="email"
                                 type="email"
                                 placeholder="you@example.com"
+                                className="h-11"
                                 required
                             />
                         </div>
@@ -197,6 +215,7 @@ export default function SignUp() {
                                 id="password"
                                 type="password"
                                 placeholder="At least 7 characters"
+                                className="h-11"
                                 required
                             />
                         </div>
@@ -207,16 +226,23 @@ export default function SignUp() {
                             </div>
                         )}
 
-                        <Button size="lg" type="submit" className="w-full" disabled={loading}>
-                            {loading ? "Creating account..." : "Sign Up"}
+                        <Button size="lg" type="submit" className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-base mt-2" disabled={loading}>
+                            {loading ? (
+                                <>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    Creating account...
+                                </>
+                            ) : (
+                                "Sign Up"
+                            )}
                         </Button>
                     </form>
                 </CardContent>
 
-                <CardFooter className="flex justify-center border-t pt-4">
+                <CardFooter className="flex justify-center border-t pt-6">
                     <p className="text-sm text-gray-600">
                         Already have an account?{" "}
-                        <Link href="/login" className="text-black font-medium hover:underline">
+                        <Link href="/login" className="text-blue-600 font-semibold hover:underline">
                             Sign in
                         </Link>
                     </p>
