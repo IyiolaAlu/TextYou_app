@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "dev:socket": "tsx --env-file=.env.local server.mts",
+    "dev:socket": "tsx server.mts",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
